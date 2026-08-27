@@ -8,7 +8,10 @@ function AppSettings() {
     const settings = readSettings()
 
     function readSettings() {
-        const emptySettings = { 'mp3_directory': undefined}
+        const emptySettings = { 
+            'mp3_directory': undefined,
+            'flac_directory': undefined
+        }
         try {
             if(fs.existsSync(settings_file)) {
                 const settingsFileContents = fs.readFileSync(settings_file)
@@ -45,7 +48,13 @@ function AppSettings() {
 
         setMp3Directory: function(directory) {
             settings.mp3_directory = directory
-            console.log("Saving Settings to " + settings_file)
+            saveSettings()
+        },
+        getFlacDirectory: function() {
+            return settings.flac_directory
+        },
+        setFlacDirectory: function(directory) {
+            settings.flac_directory = directory
             saveSettings()
         }
     }

@@ -4,8 +4,7 @@ const path = require('node:path')
 const fs = require('node:fs')
 const { dialog } = require('electron')
 const AppSettings = require('./settings.js')()
-
-const directory_max_depth = 10
+const MusicCollection = require('./music_collection.js')()
 
 console.log(__dirname)
 const createWindow = () => {
@@ -25,43 +24,24 @@ app.whenReady().then(() => {
 })
 
 function createHandlers() {
-  ipcMain.handle('pickMp3Directory', () => {
-    return pickMp3Directory()
-    })
-  ipcMain.handle('getMp3Directory', () => {
-    return AppSettings.getMp3Directory()
-  })
+  ipcMain.handle('pickMp3Directory', pickMp3Directory)
+  ipcMain.handle('getMp3Directory', AppSettings.getMp3Directory)
+  ipcMain.handle('pickFlacDirectory', pickFlacDirectory)
+  ipcMain.handle('getFlacDirectory', AppSettings.getFlacDirectory)
+  ipcMain.handle('scanCollection', () => { MusicCollection.scanCollection(AppSettings) })
+}
+
+function pickDirectory(directorySetter) {
+  const directory = dialog.showOpenDialogSync({ properties: ['openDirectory']})
+  if (directory != undefined) {
+    directorySetter(directory[0])
+  }
 }
 
 function pickMp3Directory() {
-  const directory = dialog.showOpenDialogSync({ properties: ['openDirectory']})
-  if (directory != undefined) {
-    AppSettings.setMp3Directory(directory)
-  }
+  pickDirectory(AppSettings.setMp3Directory)
 }
 
-function scanDirectory(directory, depth = 1) {
-  if (depth >= directory_max_depth) {
-    console.error("Tried to scan too deep. Not all directories were scanned.")
-    return []
-  }
-  
-  const songs = []
-  const result = fs.readdirSync(directory, {'withFileTypes': true})
-  for (const file of result) {
-    if (file.isDirectory()) {
-      const filePath = path.join(file.parentPath, file.name)
-      const newSongs = scanDirectory(filePath, depth++)
-      songs.push(...newSongs)
-    } else {
-      songs.push({'file': file.name, 'path': file.parentPath})
-    }
-  }
-  return songs
-}
-
-function printSongs(songs) {
-  for (const song of songs) {
-    console.log(song.file + " -- " + song.path)
-  }
+function pickFlacDirectory() {
+  pickDirectory(AppSettings.setFlacDirectory)
 }
