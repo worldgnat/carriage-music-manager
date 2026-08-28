@@ -1,10 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('fileHandling', {
-    pickMp3Directory: () => { return ipcRenderer.invoke('pickMp3Directory')},
-    getMp3Directory: () => { return ipcRenderer.invoke('getMp3Directory')},
-    pickFlacDirectory: () => { return ipcRenderer.invoke('pickFlacDirectory')},
-    getFlacDirectory: () => { return ipcRenderer.invoke('getFlacDirectory')}
+    getMusicSources: () => { return ipcRenderer.invoke('getMusicSources')},
+    addMusicSource: () => { return ipcRenderer.invoke('addMusicSource')},
+    removeMusicSource: (sourceDirectory) => { return ipcRenderer.invoke('removeMusicSource', sourceDirectory)},
 })
 
 contextBridge.exposeInMainWorld('musicCollection', {

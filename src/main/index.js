@@ -24,11 +24,18 @@ app.whenReady().then(() => {
 })
 
 function createHandlers() {
-  ipcMain.handle('pickMp3Directory', pickMp3Directory)
-  ipcMain.handle('getMp3Directory', AppSettings.getMp3Directory)
-  ipcMain.handle('pickFlacDirectory', pickFlacDirectory)
-  ipcMain.handle('getFlacDirectory', AppSettings.getFlacDirectory)
+  ipcMain.handle('getMusicSources', AppSettings.getMusicSources),
+  ipcMain.handle('addMusicSource', addMusicSource),
+  ipcMain.handle('removeMusicSource', (event, sourceDirectory) => { removeMusicSource(sourceDirectory) }),
   ipcMain.handle('scanCollection', () => { MusicCollection.scanCollection(AppSettings) })
+}
+
+function addMusicSource() {
+  pickDirectory(AppSettings.addMusicSource)
+}
+
+function removeMusicSource(sourceDirectory) {
+  AppSettings.removeMusicSource(sourceDirectory)
 }
 
 function pickDirectory(directorySetter) {

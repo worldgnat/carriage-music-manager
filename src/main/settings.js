@@ -1,20 +1,19 @@
 const fs = require('node:fs')
 const os = require('os')
 const path = require('node:path')
-const settings_directory = path.join(os.homedir(), '.musiccollector')
-const settings_file =  path.join(settings_directory, 'settings.json')
+const settingsDirectory = path.join(os.homedir(), '.musiccollector')
+const settingsFile =  path.join(settingsDirectory, 'settings.json')
 
 function AppSettings() {
     const settings = readSettings()
 
     function readSettings() {
-        const emptySettings = { 
-            'mp3_directory': undefined,
-            'flac_directory': undefined
+        const emptySettings = {
+            'musicSources': ['test', 'anothertest']
         }
         try {
-            if(fs.existsSync(settings_file)) {
-                const settingsFileContents = fs.readFileSync(settings_file)
+            if(fs.existsSync(settingsFile)) {
+                const settingsFileContents = fs.readFileSync(settingsFile)
                 return JSON.parse(settingsFileContents)
             } else {
                 return emptySettings
@@ -25,8 +24,8 @@ function AppSettings() {
     }
     
     function saveSettings() {
-        if (!fs.existsSync(settings_directory)) {
-            fs.mkdir(settings_directory, (err) => {
+        if (!fs.existsSync(settingsDirectory)) {
+            fs.mkdir(settingsDirectory, (err) => {
                 if (err) {
                     console.log(err)
                 } else {
@@ -35,26 +34,27 @@ function AppSettings() {
             })
         }
 
-        fs.writeFileSync(settings_file, JSON.stringify(settings), err => {
+        fs.writeFileSync(settingsFile, JSON.stringify(settings), err => {
                 if (err) {
                     console.log(err)
                 }
             })
     }
     return {
-        getMp3Directory: function() {
-            return settings.mp3_directory
+        getMusicSources: () => {
+            return settings.musicSources;
         },
-
-        setMp3Directory: function(directory) {
-            settings.mp3_directory = directory
+        addMusicSource: (sourceDirectory) => {
+            settings.musicSources.push(sourceDirectory)
             saveSettings()
         },
-        getFlacDirectory: function() {
-            return settings.flac_directory
-        },
-        setFlacDirectory: function(directory) {
-            settings.flac_directory = directory
+        removeMusicSource: (sourceDirectory) => {
+            const index = settings.musicSources.indexOf(sourceDirectory)
+            if (index > -1) {
+                settings.musicSources.splice(index, 1)
+            } else {
+                console.log("Error: Unable to find music source directory to be removed: " + sourceDirectory)
+            }
             saveSettings()
         }
     }

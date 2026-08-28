@@ -25,24 +25,63 @@ function Mp3LibraryInput() {
   </>
 }
 
-function FlacLibraryInput() {
-  const [flacFilePath, setFlacFilePath] = useState("Directory")
+function MusicSources() {
+  const [musicSources, setMusicSources] = useState([])
+  const [selectedSource, setSelectedSource] = useState(-1)
 
-  window.fileHandling.getFlacDirectory()
-    .then((flacDirectory, error) => {
-      setFlacFilePath(flacDirectory)
+  const createSourceItems = (musicSources) => {
+    const items = []
+    let index = 0
+    for (const source of musicSources) {
+      items.push({'id': index, 'source': source})
+      index++
+    }
+    return items
+  }
+  
+  window.fileHandling.getMusicSources()
+    .then((musicSources, error) => {
+      setMusicSources(createSourceItems(musicSources))
     })
 
-    const pickFlacDirectory = async () => {
-      await window.fileHandling.pickFlacDirectory()
-      const directory = await window.fileHandling.getFlacDirectory()
-      setFlacFilePath(directory)
-    }
+  const addMusicSource = async () => {
+    await window.fileHandling.addMusicSource()
+    const sources = await window.fileHandling.getMusicSources()
+    setMusicSources(createSourceItems(sources))
+  }
 
-    return <>
-      <Typography.Title level={5}>FLAC Library</Typography.Title>
-      <DirectoryPicker filePath={flacFilePath} buttonAction={pickFlacDirectory} />
-    </>
+  const removeMusicSource = async () => {
+    await window.fileHandling.removeMusicSource(musicSources[selectedSource].source)
+    const sources = await window.fileHandling.getMusicSources()
+    setMusicSources(createSourceItems(sources))
+  }
+  
+  return <>
+    <Flex vertical>
+      <Listy items={musicSources} height={400} rowKey="id" itemRender={item => (
+          (item.id === selectedSource) ? (
+            <MusicSourceItem selectState={true} item={item} clickHandler={setSelectedSource}/>
+          ) : (
+            <MusicSourceItem selectState={false} item={item} clickHandler={setSelectedSource}/>
+          )
+        )} />
+      <Flex horizontal>
+        <Button type="primary" onClick={addMusicSource}>+</Button>
+        <Button type="secondary" onClick={removeMusicSource}>-</Button>
+      </Flex>
+    </Flex>
+  </>
+}
+
+function MusicSourceItem({ selectState, item, clickHandler }) {
+  const text = selectState ? "(Selected)" + item.source : item.source
+
+  const selectSelf = () => {
+    clickHandler(item.id)
+  }
+  return <>
+    <Flex horizontal onClick={selectSelf}>{text}</Flex>
+  </>
 }
 
 function scanCollection() {
@@ -68,9 +107,7 @@ function App() {
         <div>
           <Typography.Title level={2}>Music Collection</Typography.Title>
           <Flex vertical>
-
-            <Mp3LibraryInput />
-            <FlacLibraryInput />
+            <MusicSources />
             <Button onClick={scanCollection}>Scan Collection</Button>
           </Flex>
         </div>
