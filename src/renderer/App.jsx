@@ -112,18 +112,6 @@ function App() {
           </Flex>
         </div>
       </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
     </>
   )
 }
