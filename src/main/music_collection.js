@@ -6,11 +6,12 @@ const directory_max_depth = 10
 function MusicCollection() {
 
     function scanCollection(appSettings) {
-        console.log(JSON.stringify(appSettings.getMp3Directory()))
-        const mp3Songs = scanDirectory(appSettings.getMp3Directory())
-        for (let song of mp3Songs) {
-            console.log(song)
-        }
+      const collection = []
+      for (let source of appSettings.getMusicSources()) {
+        const songs = scanDirectory(source)
+        collection.push(...songs)
+      }
+      return collection
     }
     return {
         scanCollection: scanCollection
