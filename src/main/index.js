@@ -3,6 +3,7 @@ const { preload } = require('react-dom')
 const path = require('node:path')
 const fs = require('node:fs')
 const { dialog } = require('electron')
+const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 const AppSettings = require('./settings.js')()
 const MusicCollection = require('./music_collection.js')()
 
@@ -21,6 +22,9 @@ const createWindow = () => {
 app.whenReady().then(() => {
   createHandlers()
   createWindow()
+  installExtension(REACT_DEVELOPER_TOOLS, { loadExtensionOptions: { allowFileAccess: true } })
+        .then((ext) => console.log(`Added Extension:  ${ext.name}`))
+        .catch((err) => console.log('An error occurred: ', err));
 })
 
 function createHandlers() {
