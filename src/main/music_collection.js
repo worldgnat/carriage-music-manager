@@ -1,6 +1,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
 
+const supported_extensions = ['.mp3', '.m4a', '.flac', '.ogg', '.wav']
 const directory_max_depth = 10
 
 function MusicCollection() {
@@ -32,10 +33,24 @@ function scanDirectory(directory, depth = 1) {
       const newSongs = scanDirectory(filePath, depth++)
       songs.push(...newSongs)
     } else {
-      songs.push({'file': file.name, 'path': file.parentPath})
+      if (isSupportedFormat(file.name))
+        songs.push({'file': file.name, 'path': file.parentPath})
     }
   }
   return songs
+}
+
+function isSupportedFormat(fileName) {
+  const extension = getFileExtension(fileName)
+  return (supported_extensions.includes(extension))
+}
+
+function getFileExtension(fileName) {
+  const dotIndex = fileName.lastIndexOf('.')
+  if (dotIndex != -1) 
+    return fileName.substring(dotIndex, fileName.length)
+  else 
+    return ""
 }
 
 module.exports = MusicCollection

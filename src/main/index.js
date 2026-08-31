@@ -31,7 +31,7 @@ function createHandlers() {
   ipcMain.handle('getMusicSources', AppSettings.getMusicSources),
   ipcMain.handle('addMusicSource', addMusicSource),
   ipcMain.handle('removeMusicSource', (event, sourceDirectory) => { removeMusicSource(sourceDirectory) }),
-  ipcMain.handle('scanCollection', () => { MusicCollection.scanCollection(AppSettings) })
+  ipcMain.handle('scanCollection', () => { return MusicCollection.scanCollection(AppSettings) })
 }
 
 function addMusicSource() {

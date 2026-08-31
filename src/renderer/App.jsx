@@ -6,6 +6,8 @@ import { Flex } from 'antd'
 import { Typography } from 'antd'
 import { Menu } from 'antd'
 
+const { TextArea } = Input;
+
 
 function MusicSources() {
   const [musicSources, setMusicSources] = useState([])
@@ -63,21 +65,24 @@ function MusicSourceItem({ selectState, item, clickHandler }) {
   </>
 }
 
-function scanCollection() {
-  window.musicCollection.scanCollection()
-}
 
-function DirectoryPicker({ filePath, buttonAction }) {
-  return <>
-    <Flex horizontal>
-      <Input disabled placeholder={filePath}></Input>
-      <Button type="primary" onClick={() => {buttonAction()}}>Set</Button>
-    </Flex>
-  </>
-}
 
 function MusicCollection() {
+  const [collectionJson, setCollectionJson] = useState("")
+
+  function scanCollection() {
+    window.musicCollection.scanCollection()
+      .then((value) => {
+        console.log(JSON.stringify(value))
+        setCollectionJson(JSON.stringify(value))
+      })
+  }
+
   return <>
+    <Flex vertical>
+      <TextArea rows={4} value={collectionJson} />
+      <Button onClick={scanCollection}>Scan Collection</Button>
+    </Flex>
   </>
 }
 
@@ -91,7 +96,6 @@ function App() {
             <Typography.Title level={2}>Music Sources</Typography.Title>
             <Flex vertical>
               <MusicSources />
-              <Button onClick={scanCollection}>Scan Collection</Button>
             </Flex>
           </div>
           <div>
