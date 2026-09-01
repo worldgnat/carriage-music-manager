@@ -77,11 +77,15 @@ function MusicCollection() {
         setCollectionJson(JSON.stringify(value))
       })
   }
+  function convertCollection() {
+    window.musicCollection.convertCollection()
+  }
 
   return <>
     <Flex vertical>
       <TextArea rows={4} value={collectionJson} />
       <Button onClick={scanCollection}>Scan Collection</Button>
+      <Button type="primary" danger onClick={convertCollection}>ConvertCollection</Button>
     </Flex>
   </>
 }

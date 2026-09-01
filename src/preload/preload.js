@@ -7,5 +7,6 @@ contextBridge.exposeInMainWorld('fileHandling', {
 })
 
 contextBridge.exposeInMainWorld('musicCollection', {
-    scanCollection: () => { return ipcRenderer.invoke('scanCollection')}
+    scanCollection: () => { return ipcRenderer.invoke('scanCollection')},
+    convertCollection: () => { ipcRenderer.invoke('convertCollection')}
 })
