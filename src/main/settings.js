@@ -1,18 +1,20 @@
 const fs = require('node:fs')
 const os = require('os')
 const path = require('node:path')
-const settingsDirectory = path.join(os.homedir(), '.musiccollector')
-const settingsFile =  path.join(settingsDirectory, 'settings.json')
+
 
 function AppSettings() {
+    const settingsDirectory = path.join(os.homedir(), '.musiccollector')
+    const settingsFile =  path.join(settingsDirectory, 'settings.json')
     const settings = readSettings()
 
     function readSettings() {
         const emptySettings = {
-            'musicSources': ['test', 'anothertest']
+            'musicSources': []
         }
         try {
-            if(fs.existsSync(settingsFile)) {
+            const fileExists = fs.existsSync(settingsFile)
+            if(fileExists) {
                 const settingsFileContents = fs.readFileSync(settingsFile)
                 return JSON.parse(settingsFileContents)
             } else {
@@ -59,5 +61,7 @@ function AppSettings() {
         }
     }
 }
+
+
 
 module.exports = AppSettings

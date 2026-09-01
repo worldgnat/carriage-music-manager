@@ -10,7 +10,8 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "test": "jest"
   },
   "keywords": [],
   "author": {
@@ -35,6 +36,7 @@
     "css-loader": "^6.11.0",
     "electron": "43.4.0",
     "electron-devtools-installer": "^4.0.0",
+    "jest": "^30.5.1",
     "node-loader": "^2.1.0",
     "style-loader": "^3.3.4"
   },
