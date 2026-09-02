@@ -30,8 +30,9 @@
   }
 }
 
-.selected {
-  background-color: aqua;
+.music-collection {
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 @media (prefers-color-scheme: dark) {

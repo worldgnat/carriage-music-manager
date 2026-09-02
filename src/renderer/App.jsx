@@ -6,6 +6,8 @@ import { Flex } from 'antd'
 import { Typography } from 'antd'
 import { Menu } from 'antd'
 
+const { TextArea } = Input;
+
 
 function MusicSources() {
   const [musicSources, setMusicSources] = useState([])
@@ -63,21 +65,38 @@ function MusicSourceItem({ selectState, item, clickHandler }) {
   </>
 }
 
-function scanCollection() {
-  window.musicCollection.scanCollection()
-}
-
-function DirectoryPicker({ filePath, buttonAction }) {
-  return <>
-    <Flex horizontal>
-      <Input disabled placeholder={filePath}></Input>
-      <Button type="primary" onClick={() => {buttonAction()}}>Set</Button>
-    </Flex>
-  </>
-}
-
 function MusicCollection() {
+  const [musicCollection, setCollection] = useState([{'key': 0, 'label': "No Songs Loaded"}])
+
+  function scanCollection() {
+    window.musicCollection.scanCollection()
+      .then((collection) => {
+        const menuItems = []
+        let index = 0
+        for (const song of collection) {
+          const item = {'key': index, 'label': song.file}
+          menuItems.push(item)
+          index++
+        }
+        setCollection(menuItems)
+      })
+  }
+  function convertCollection() {
+    window.musicCollection.convertCollection()
+  }
+
   return <>
+    <Flex vertical>
+      <Menu 
+        className="music-collection"
+        defaultSelectedKeys={['0']}
+        mode="inline"
+        items={musicCollection}
+        onSelect={({key}) => {console.log(key)}}
+        />
+      <Button onClick={scanCollection}>Scan Collection</Button>
+      <Button type="primary" danger onClick={convertCollection}>ConvertCollection</Button>
+    </Flex>
   </>
 }
 
@@ -91,7 +110,6 @@ function App() {
             <Typography.Title level={2}>Music Sources</Typography.Title>
             <Flex vertical>
               <MusicSources />
-              <Button onClick={scanCollection}>Scan Collection</Button>
             </Flex>
           </div>
           <div>
