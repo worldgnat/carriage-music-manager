@@ -1,5 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path')
+const { readMetadata } = require('./metadata_extractor.js')
 const MusicConverter = require('./music_converter.js')()
 const { getFileExtension }  = require('./file_extension_tools.js')
 
@@ -7,22 +8,42 @@ const supported_extensions = ['.mp3', '.m4a', '.flac', '.ogg', '.wav']
 const directory_max_depth = 10
 
 function MusicCollection() {
+  const collection = new Map()
 
   function scanCollection(appSettings) {
-    const collection = []
     for (let source of appSettings.getMusicSources()) {
       const songs = scanDirectory(source)
-      collection.push(...songs)
+      songs.map((song) => {
+        const songId = song.filePath + song.modifiedTime
+
+        if (!collection.has(songId)) {
+          const metadataFields = readMetadata(song.filePath)
+          const songData = {
+            'artist': metadataFields.artist,
+            'album': metadataFields.album,
+            'title': metadataFields.title,
+            'track': metadataFields.track,
+            'path': song.filePath,
+            'format': song.format,
+            'fileName': song.fileName
+          }
+          collection.set(songId, songData)
+        }
+      })
     }
-    return collection
   }
 
   function convertCollection(collection) {
     MusicConverter.transcodeAll(collection)
   }
+  
+  function getCollection() {
+    return collection
+  }
     
   return {
       scanCollection: scanCollection,
+      getCollection: getCollection,
       convertCollection: convertCollection
   }
 }
@@ -36,13 +57,20 @@ function scanDirectory(directory, depth = 1) {
   const songs = []
   const result = fs.readdirSync(directory, {'withFileTypes': true})
   for (const file of result) {
+    const filePath = path.join(file.parentPath, file.name)
     if (file.isDirectory()) {
-      const filePath = path.join(file.parentPath, file.name)
       const newSongs = scanDirectory(filePath, depth++)
       songs.push(...newSongs)
     } else {
-      if (isSupportedFormat(file.name))
-        songs.push({'file': file.name, 'path': file.parentPath})
+      if (isSupportedFormat(file.name)) {
+        const modified = fs.statSync(filePath).mtime;
+        songs.push({
+          'fileName': file.name, 
+          'filePath': filePath, 
+          'format': getFileExtension(filePath), 
+          'modifiedTime': modified
+        })
+      }
     }
   }
   return songs

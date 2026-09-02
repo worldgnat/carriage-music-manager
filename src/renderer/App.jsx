@@ -68,17 +68,24 @@ function MusicSourceItem({ selectState, item, clickHandler }) {
 function MusicCollection() {
   const [musicCollection, setCollection] = useState([{'key': 0, 'label': "No Songs Loaded"}])
 
-  function scanCollection() {
-    window.musicCollection.scanCollection()
+  function getCollection() {
+    window.musicCollection.getCollection()
       .then((collection) => {
         const menuItems = []
         let index = 0
         for (const song of collection) {
-          const item = {'key': index, 'label': song.file}
+          const item = {'key': index, 'label': `${song.artist} - ${song.album}: ${song.title}`}
           menuItems.push(item)
           index++
         }
         setCollection(menuItems)
+      })
+  }
+
+  function scanCollection() {
+    window.musicCollection.scanCollection()
+      .then(() => {
+        getCollection()
       })
   }
   function convertCollection() {
