@@ -7,7 +7,6 @@ const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-d
 const AppSettings = require('./settings.js')()
 const MusicCollection = require('./music_collection.js')()
 
-console.log(__dirname)
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
@@ -17,6 +16,7 @@ const createWindow = () => {
     }
   })
   win.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+  MusicCollection.setUpdateCollectionCallback((collection) => win.webContents.send('update-collection', collection))
 }
 
 app.whenReady().then(() => {
@@ -32,6 +32,7 @@ function createHandlers() {
   ipcMain.handle('addMusicSource', addMusicSource)
   ipcMain.handle('removeMusicSource', (event, sourceDirectory) => { removeMusicSource(sourceDirectory) })
   ipcMain.handle('scanCollection', () => { return MusicCollection.scanCollection(AppSettings) })
+  ipcMain.handle('getCollection', () => { return MusicCollection.getCollection()})
   ipcMain.handle('convertCollection', () => { 
     MusicCollection.convertCollection(MusicCollection.scanCollection(AppSettings))
   })
@@ -50,12 +51,4 @@ function pickDirectory(directorySetter) {
   if (directory != undefined) {
     directorySetter(directory[0])
   }
-}
-
-function pickMp3Directory() {
-  pickDirectory(AppSettings.setMp3Directory)
-}
-
-function pickFlacDirectory() {
-  pickDirectory(AppSettings.setFlacDirectory)
 }

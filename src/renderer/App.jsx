@@ -1,13 +1,9 @@
 import { useState } from 'react'
 import './App.css'
 import { Button } from 'antd'
-import { Input } from 'antd'
 import { Flex } from 'antd'
 import { Typography } from 'antd'
 import { Menu } from 'antd'
-
-const { TextArea } = Input;
-
 
 function MusicSources() {
   const [musicSources, setMusicSources] = useState([])
@@ -56,30 +52,23 @@ function MusicSources() {
   </>
 }
 
-function MusicSourceItem({ selectState, item, clickHandler }) {
-  const selectSelf = () => {
-    clickHandler(item.id)
-  }
-  return <>
-    <div onClick={selectSelf} className={selectState ? "selected" : "deselected"}>{item.source}</div>
-  </>
-}
-
 function MusicCollection() {
   const [musicCollection, setCollection] = useState([{'key': 0, 'label': "No Songs Loaded"}])
+  window.musicCollection.onCollectionUpdate(updateCollection)
+
+  function updateCollection(collection) {
+    const menuItems = []
+    let index = 0
+    for (const song of collection) {
+      const item = {'key': index, 'label': `${song[1].artist} - ${song[1].album}: ${song[1].title}`}
+      menuItems.push(item)
+      index++
+    }
+    setCollection(menuItems)
+  }
 
   function scanCollection() {
     window.musicCollection.scanCollection()
-      .then((collection) => {
-        const menuItems = []
-        let index = 0
-        for (const song of collection) {
-          const item = {'key': index, 'label': song.file}
-          menuItems.push(item)
-          index++
-        }
-        setCollection(menuItems)
-      })
   }
   function convertCollection() {
     window.musicCollection.convertCollection()

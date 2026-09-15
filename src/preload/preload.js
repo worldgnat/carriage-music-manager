@@ -8,5 +8,7 @@ contextBridge.exposeInMainWorld('fileHandling', {
 
 contextBridge.exposeInMainWorld('musicCollection', {
     scanCollection: () => { return ipcRenderer.invoke('scanCollection')},
-    convertCollection: () => { ipcRenderer.invoke('convertCollection')}
+    getCollection: () => { return ipcRenderer.invoke('getCollection')},
+    convertCollection: () => { ipcRenderer.invoke('convertCollection')},
+    onCollectionUpdate: (callback) => { ipcRenderer.on('update-collection', (_event, value) => callback(value))}
 })
