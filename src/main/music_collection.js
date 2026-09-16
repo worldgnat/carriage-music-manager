@@ -36,6 +36,11 @@ function MusicCollection() {
             'format': song.format,
             'fileName': song.fileName
           }
+    if (metadataFields.artist == undefined) {
+      console.log("Unidentified song:")
+      console.log(JSON.stringify(metadataFields))
+      console.log(JSON.stringify(song))
+    }
     collection.set(songId(song), songData)
     updateCollectionCallback(collection)
   }

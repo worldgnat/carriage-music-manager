@@ -1,48 +1,24 @@
-const { spawn } = require('node:child_process')
-
-const albumPatternField = [/^album\s+:/, 'album']
-const artistPatternField = [/^artist\s+:/, 'artist']
-const titlePatternField = [/^title\s+:/, 'title']
-const trackPatternField = [/^track\s+:/, 'track']
-const patternFields = [
-    albumPatternField,
-    artistPatternField,
-    titlePatternField, 
-    trackPatternField
-]
+const { parseFile } = require('music-metadata')
 
 function readMetadata(song, updateCollectionCallback) {
-    try {
-        const filePath = song.filePath
-        const output = spawn('ffprobe', ['-hide_banner', filePath])
-        output.stderr.on('data', (data) => {
-            const fields = {}
-            const info = data.toString()
-            const lines = info.split("\n")
-            for (let line of lines) {
-                const trimmed = line.trim()
-                patternFields.map((patternField) => {
-                    if (trimmed.match(patternField[0])) {
-                        fields[patternField[1]] = extractValue(trimmed)
-                    }
-                })
+    const filePath = song.filePath
+    parseFile(filePath)
+        .then((metadata) => {
+            const fields = {
+                'artist': metadata.common.artist,
+                'album': metadata.common.album,
+                'title': metadata.common.title,
+                'track': metadata.common.track,
             }
+            
             updateCollectionCallback(fields, song)
         })
-        
-    } catch (error) {
-        console.error("Failed to run ffprobe with error: " + error.code)
-    }
-}
+        .catch((error) => {
+            console.error("Failed to parse song: ${filePath}")
+            console.error(error)
+        })
+    
 
-
-function extractValue(ffprobeMetadataLine) {
-    let index = ffprobeMetadataLine.indexOf(':')
-    if (index != -1) {
-        return ffprobeMetadataLine.substring(index+1, ffprobeMetadataLine.length).trim()
-    } else {
-        throw new Error("Unable to parse output from ffprobe. Problem line was: " + ffprobeMetadataLine)
-    }
 }
 
 module.exports = { readMetadata }
