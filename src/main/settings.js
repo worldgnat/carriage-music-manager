@@ -42,6 +42,9 @@ function AppSettings() {
                 }
             })
     }
+    function getSettingsDirectory() {
+        return settingsDirectory
+    }
     return {
         getMusicSources: () => {
             return settings.musicSources;
@@ -58,7 +61,9 @@ function AppSettings() {
                 console.log("Error: Unable to find music source directory to be removed: " + sourceDirectory)
             }
             saveSettings()
-        }
+        },
+        getSettingsDirectory: getSettingsDirectory
+
     }
 }
 
