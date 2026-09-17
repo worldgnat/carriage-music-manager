@@ -5,7 +5,7 @@ const fs = require('node:fs')
 const { dialog } = require('electron')
 const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 const AppSettings = require('./settings.js')()
-const MusicCollection = require('./music_collection.js')()
+const MusicCollection = require('./music_collection.js')(AppSettings)
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -25,6 +25,11 @@ app.whenReady().then(() => {
   installExtension(REACT_DEVELOPER_TOOLS, { loadExtensionOptions: { allowFileAccess: true } })
         .then((ext) => console.log(`Added Extension:  ${ext.name}`))
         .catch((err) => console.log('An error occurred: ', err));
+})
+
+app.on('window-all-closed', () => {
+  MusicCollection.saveCollection()
+  app.quit()
 })
 
 function createHandlers() {

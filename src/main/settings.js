@@ -15,7 +15,7 @@ function AppSettings() {
         try {
             const fileExists = fs.existsSync(settingsFile)
             if(fileExists) {
-                const settingsFileContents = fs.readFileSync(settingsFile)
+                const settingsFileContents = fs.readFileSync(settingsFile, 'utf-8')
                 return JSON.parse(settingsFileContents)
             } else {
                 return emptySettings
@@ -42,6 +42,9 @@ function AppSettings() {
                 }
             })
     }
+    function getSettingsDirectory() {
+        return settingsDirectory
+    }
     return {
         getMusicSources: () => {
             return settings.musicSources;
@@ -58,7 +61,9 @@ function AppSettings() {
                 console.log("Error: Unable to find music source directory to be removed: " + sourceDirectory)
             }
             saveSettings()
-        }
+        },
+        getSettingsDirectory: getSettingsDirectory
+
     }
 }
 

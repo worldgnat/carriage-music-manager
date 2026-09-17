@@ -1,6 +1,6 @@
 const { parseFile } = require('music-metadata')
 
-function readMetadata(song, updateCollectionCallback) {
+function readMetadata(song, addToCollectionCallback) {
     const filePath = song.filePath
     parseFile(filePath)
         .then((metadata) => {
@@ -10,15 +10,12 @@ function readMetadata(song, updateCollectionCallback) {
                 'title': metadata.common.title,
                 'track': metadata.common.track,
             }
-            
-            updateCollectionCallback(fields, song)
+            addToCollectionCallback(fields, song)
         })
         .catch((error) => {
             console.error("Failed to parse song: ${filePath}")
             console.error(error)
         })
-    
-
 }
 
 module.exports = { readMetadata }

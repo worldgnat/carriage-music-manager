@@ -7,8 +7,10 @@ const { getFileExtension }  = require('./file_extension_tools.js')
 const supported_extensions = ['.mp3', '.m4a', '.flac', '.ogg', '.wav']
 const directory_max_depth = 10
 
-function MusicCollection() {
-  const collection = new Map()
+function MusicCollection(appSettings) {
+  const settings = appSettings
+  const collectionFile = path.join(settings.getSettingsDirectory(), "music_collection.json")
+  const collection = readCollection()
   var updateCollectionCallback;
 
   function setUpdateCollectionCallback(callback) {
@@ -19,11 +21,39 @@ function MusicCollection() {
     for (let source of appSettings.getMusicSources()) {
       const songs = scanDirectory(source)
       songs.map((song) => {
-        if (!collection.has(songId(song))) {
+        if (!collection[songId(song)]) {
           readMetadata(song, addToCollection)
         }
       })
     }
+    updateCollectionCallback(collection)
+  }
+
+  function readCollection() {
+    const emptyCollection = {}
+            try {
+                const fileExists = fs.existsSync(collectionFile)
+                if(fileExists) {
+                    const collectionFileContents = fs.readFileSync(collectionFile, 'utf-8')
+                    console.log(collectionFileContents)
+                    return JSON.parse(collectionFileContents)
+                } else {
+                    return emptyCollection
+                }
+            } catch (err) {
+              console.error("Error reading collection file.")
+              console.error(err)
+              return emptyCollection
+            }
+  }
+
+  function saveCollection() {
+    fs.writeFile(collectionFile, JSON.stringify(collection), (error) => {
+        if (error) {
+          console.error("Failed to write collection file.")
+          console.error(error)
+        }
+      })
   }
 
   function addToCollection(metadataFields, song) {
@@ -36,18 +66,14 @@ function MusicCollection() {
             'format': song.format,
             'fileName': song.fileName
           }
-    if (metadataFields.artist == undefined) {
-      console.log("Unidentified song:")
-      console.log(JSON.stringify(metadataFields))
-      console.log(JSON.stringify(song))
-    }
-    collection.set(songId(song), songData)
+    collection[songId(song)] = songData
     updateCollectionCallback(collection)
   }
 
   function songId(song) {
     return song.filePath + song.modifiedTime
   }
+
   function convertCollection(collection) {
     MusicConverter.transcodeAll(collection)
   }
@@ -60,7 +86,8 @@ function MusicCollection() {
       scanCollection: scanCollection,
       getCollection: getCollection,
       convertCollection: convertCollection,
-      setUpdateCollectionCallback: setUpdateCollectionCallback
+      setUpdateCollectionCallback: setUpdateCollectionCallback,
+      saveCollection: saveCollection
   }
 }
 

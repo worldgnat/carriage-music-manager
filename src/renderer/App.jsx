@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import { Button } from 'antd'
 import { Flex } from 'antd'
@@ -55,12 +55,16 @@ function MusicSources() {
 function MusicCollection() {
   const [musicCollection, setCollection] = useState([{'key': 0, 'label': "No Songs Loaded"}])
   window.musicCollection.onCollectionUpdate(updateCollection)
+  useEffect(() => {
+    scanCollection()
+  })
 
   function updateCollection(collection) {
     const menuItems = []
     let index = 0
-    for (const song of collection) {
-      const item = {'key': index, 'label': `${song[1].artist} - ${song[1].album}: ${song[1].title}`}
+    for (const key in collection) {
+      const song = collection[key]
+      const item = {'key': index, 'label': `${song.artist} - ${song.album}: ${song.title}`}
       menuItems.push(item)
       index++
     }
@@ -84,7 +88,7 @@ function MusicCollection() {
         onSelect={({key}) => {console.log(key)}}
         />
       <Button onClick={scanCollection}>Scan Collection</Button>
-      <Button type="primary" danger onClick={convertCollection}>ConvertCollection</Button>
+      <Button type="primary" danger onClick={convertCollection}>Convert Collection</Button>
     </Flex>
   </>
 }
