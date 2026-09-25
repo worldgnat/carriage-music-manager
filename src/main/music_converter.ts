@@ -1,6 +1,6 @@
 const { execFile } = require('node:child_process')
 const path = require('node:path')
-const { getFileExtension, substituteExtension } = require('./file_extension_tools.js')
+const { getFileExtension, substituteExtension } = require('./file_extension_tools')
 
 const encoderArguments = ['-c:v', 'copy', '-c:a', 'libmp3lame']
 const qualitySetting = 0

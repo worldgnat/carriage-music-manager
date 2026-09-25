@@ -1,9 +1,7 @@
-import { defineConfig } from 'jest'
-
-export default defineConfig({
-    collectCoverage: true,
-    collectCoverageFrom: ['./src/**'],
-    transform: {
-        "^.+\\.[t|j]sx?$": "babel-jest"
-    }
-})
+module.exports = {
+  collectCoverage: true,
+  collectCoverageFrom: ['./src/**'],
+  transform: {
+    '^.+\\.[tj]sx?$': 'babel-jest',
+  },
+};

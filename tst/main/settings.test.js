@@ -1,4 +1,4 @@
-const AppSettingsFunction = require('../../src/main/settings.js')
+const AppSettingsFunction = require('../../src/main/settings')
 const fs = require('node:fs')
 const os = require('os')
 jest.mock('node:fs')

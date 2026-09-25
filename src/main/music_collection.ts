@@ -1,8 +1,8 @@
 const fs = require('node:fs')
 const path = require('node:path')
-const { readMetadata } = require('./metadata_extractor.js')
-const MusicConverter = require('./music_converter.js')()
-const { getFileExtension }  = require('./file_extension_tools.js')
+const { readMetadata } = require('./metadata_extractor')
+const MusicConverter = require('./music_converter')()
+const { getFileExtension } = require('./file_extension_tools')
 
 const supported_extensions = ['.mp3', '.m4a', '.flac', '.ogg', '.wav']
 const directory_max_depth = 10

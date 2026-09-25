@@ -1,11 +1,7 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
-const { preload } = require('react-dom')
-const path = require('node:path')
-const fs = require('node:fs')
-const { dialog } = require('electron')
-const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
-const AppSettings = require('./settings.js')()
-const MusicCollection = require('./music_collection.js')(AppSettings)
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer')
+const AppSettings = require('./settings')()
+const MusicCollection = require('./music_collection')(AppSettings)
 
 const createWindow = () => {
   const win = new BrowserWindow({

@@ -1,9 +1,9 @@
-const MusicConverter = require('../../src/main/music_converter.js')
+const MusicConverter = require('../../src/main/music_converter')
 const { execFile } = require('node:child_process')
-const { getFileExtension, substituteExtension } = require('../../src/main/file_extension_tools.js')
+const { getFileExtension, substituteExtension } = require('../../src/main/file_extension_tools')
 
 jest.mock('node:child_process')
-jest.mock('../../src/main/file_extension_tools.js')
+jest.mock('../../src/main/file_extension_tools')
 
 beforeEach(() => {
     execFile.mockClear()

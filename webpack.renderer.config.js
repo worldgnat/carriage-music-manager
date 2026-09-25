@@ -7,6 +7,9 @@ rules.push({
 });
 
 module.exports = {
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+  },
   // Put your normal webpack config below here
   module: {
     rules,

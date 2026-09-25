@@ -1,4 +1,4 @@
-const { getFileExtension, substituteExtension } = require('../../src/main/file_extension_tools.js')
+const { getFileExtension, substituteExtension } = require('../../src/main/file_extension_tools')
 
 test('getFileExtension returns extension if one exists', () => {
     const testFileName = "file.ext"
